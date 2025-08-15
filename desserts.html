@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu with Cart and Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .menu-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .menu-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            width: 250px;
+            margin: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .menu-item img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        .menu-content {
+            padding: 15px;
+        }
+        .menu-content h3 {
+            margin: 10px 0;
+        }
+        .menu-content p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .menu-content .price {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .cart-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .cart-btn:hover {
+            background-color: #e60000;
+        }
+        .cart {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .cart-items {
+            list-style: none;
+            padding: 0;
+        }
+        .cart-items li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .payment-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .payment-btn:hover {
+            background-color: #45a049;
+        }
+        .payment-confirmation {
+            font-size: 20px;
+            text-align: center;
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Main Course</h2>
+
+<div class="menu-container">
+    <div class="menu-item">
+        <img src="cheesecake.jpeg" alt="Cheesecake">
+        <div class="menu-content">
+            <h3>Cheesecake</h3>
+            <p>Jaggery-based cheesecake with in-house cream cheese</p>
+            <p class="price">Rs.190</p>
+            <button class="cart-btn" onclick="addToCart('Cheesecake', 190)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <img src="chocolava.jpeg" alt="Chocolava">
+        <div class="menu-content">
+            <h3>Chocolava</h3>
+            <p>Hot and melting lava bursting out of the chocolate cake</p>
+            <p class="price">Rs.100</p>
+            <button class="cart-btn" onclick="addToCart('Chocolava', 100)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <img src="churros.jpeg" alt="Churros">
+        <div class="menu-content">
+            <h3>Churros</h3>
+            <p>Whole-wheat churros with sugar-free chocolate dip</p>
+            <p class="price">Rs.200</p>
+            <button class="cart-btn" onclick="addToCart('Churros', 200)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <img src="kunafa.jpeg" alt="Kunafa">
+        <div class="menu-content">
+            <h3>Kunafa</h3>
+            <p>Crispy-chocolaty Kunafa</p>
+            <p class="price">Rs.150</p>
+            <button class="cart-btn" onclick="addToCart('Kunafa', 150)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <img src="apricot delight.jpeg" alt="Apricot Delight">
+        <div class="menu-content">
+            <h3>Apricot Delight</h3>
+            <p>Healthy and tasty Apricot Delight</p>
+            <p class="price">Rs.270</p>
+            <button class="cart-btn" onclick="addToCart('Apricot Delight', 270)">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="menu-item">
+        <img src="tres leches.jpeg" alt="Tres Leches">
+        <div class="menu-content">
+            <h3>Tres Leches</h3>
+            <p>Soft and melting Tres Leches</p>
+            <p class="price">Rs.240</p>
+            <button class="cart-btn" onclick="addToCart('Tres Leches', 240)">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<h2>Your Cart</h2>
+<div class="cart">
+    <ul class="cart-items" id="cart-items"></ul>
+    <p class="total" id="total-cost">Total: Rs.0</p>
+    <button class="payment-btn" onclick="proceedToPayment()">Proceed to Payment</button>
+    <p class="payment-confirmation" id="payment-confirmation"></p>
+</div>
+
+<script>
+    let cart = [];
+    let totalCost = 0;
+
+    function addToCart(itemName, price) {
+        cart.push({ name: itemName, price: price });
+        totalCost += price;
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const totalCostContainer = document.getElementById('total-cost');
+        cartItemsContainer.innerHTML = '';
+        cart.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - Rs.${item.price}`;
+            cartItemsContainer.appendChild(li);
+        });
+        totalCostContainer.textContent = `Total: Rs.${totalCost}`;
+    }
+
+    function proceedToPayment() {
+        if (totalCost === 0) {
+            alert('Your cart is empty. Please add items to the cart.');
+            return;
+        }
+
+        const paymentConfirmation = document.getElementById('payment-confirmation');
+        paymentConfirmation.textContent = `Payment Successful! You have been charged Rs.${totalCost}. Thank you for your order!`;
+        cart = [];
+        totalCost = 0;
+        updateCartUI();
+    }
+</script>
+
+</body>
+</html>
